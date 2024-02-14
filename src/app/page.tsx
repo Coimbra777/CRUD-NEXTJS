@@ -4,18 +4,25 @@ import Formulario from "@/components/Formulario";
 import Layout from "@/components/Layout";
 import Tabela from "@/components/Tabela";
 import Cliente from "@/core/Cliente";
-import { useState } from "react";
+import ClienteRepositorio from "@/core/ClienteRepositorio";
+import ColecaoCliente from "@/firebase/db/ColecaoCliente";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const repo: ClienteRepositorio = new ColecaoCliente();
+
   const [cliente, setCliente] = useState<Cliente>(Cliente.vazio());
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [visivel, setVisivel] = useState<"tabela" | "form">("tabela");
 
-  const clientes = [
-    new Cliente("Ana", 34, "1"),
-    new Cliente("Pedro", 36, "2"),
-    new Cliente("Carlos", 24, "3"),
-    new Cliente("João", 40, "4"),
-  ];
+  useEffect(obterTodos, []);
+
+  function obterTodos() {
+    repo.obterTodos(cliente).then((clientes) => {
+      setClientes(clientes);
+      setVisivel("tabela");
+    });
+  }
 
   function clienteSelecionado(cliente: Cliente) {
     setCliente(cliente);
@@ -24,8 +31,8 @@ export default function Home() {
   function clienteExcluido(cliente: Cliente) {
     console.log("Excluir ...", cliente.nome);
   }
-  function salvarCliente(cliente: Cliente) {
-    console.log(cliente);
+  async function salvarCliente(cliente: Cliente) {
+    await repo.salvar(cliente);
     setVisivel("tabela");
   }
 
