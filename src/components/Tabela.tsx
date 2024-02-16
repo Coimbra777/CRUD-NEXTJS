@@ -6,13 +6,18 @@ interface TabelaProps {
   clienteExcluido?: (cliente: Cliente) => void;
 }
 export default function Tabela(props: TabelaProps) {
+  const exibirAcoes = props.clienteExcluido || props.clienteSelecionado;
   function renderizarCabeçalho() {
     return (
       <tr>
         <th className="p-4 rounded-tl-lg">Código</th>
         <th className="p-4">Nome</th>
         <th className="p-4">Idade</th>
-        <th className="p-4 rounded-tr-lg text-center">Ações</th>
+        {exibirAcoes ? (
+          <th className="p-4 rounded-tr-lg text-center">Ações</th>
+        ) : (
+          false
+        )}
       </tr>
     );
   }
@@ -27,7 +32,7 @@ export default function Tabela(props: TabelaProps) {
           <td className="p-4">{cliente.id}</td>
           <td className="p-4">{cliente.nome}</td>
           <td className="p-4">{cliente.idade}</td>
-          {renderizarAcoes(cliente)}
+          {exibirAcoes ? renderizarAcoes(cliente) : false}
         </tr>
       );
     });
